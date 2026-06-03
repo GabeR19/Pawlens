@@ -1,0 +1,470 @@
+{{ 'pawlens.css' | asset_url | stylesheet_tag }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+{%- comment -%} Map the "default bundle" setting to a variant position (1-based). {%- endcomment -%}
+{%- assign default_index = 2 -%}
+{%- case section.settings.default_bundle -%}
+  {%- when 'single' -%}{%- assign default_index = 1 -%}
+  {%- when 'popular' -%}{%- assign default_index = 2 -%}
+  {%- when 'pro' -%}{%- assign default_index = 3 -%}
+{%- endcase -%}
+
+<div class="pawlens-section">
+
+<!-- ============== ANNOUNCEMENT BAR ============== -->
+<div class="announcement" aria-label="Site announcements">
+  <div class="announcement-track" aria-hidden="true">
+    <span>FREE US SHIPPING</span><span aria-hidden="true">·</span>
+    <span>30-DAY MONEY-BACK GUARANTEE</span><span aria-hidden="true">·</span>
+    <span>1080P FISHEYE HD</span><span aria-hidden="true">·</span>
+    <span>SEE THE WORLD FROM THEIR EYES</span><span aria-hidden="true">·</span>
+    <span>FREE US SHIPPING</span><span aria-hidden="true">·</span>
+    <span>30-DAY MONEY-BACK GUARANTEE</span><span aria-hidden="true">·</span>
+    <span>1080P FISHEYE HD</span><span aria-hidden="true">·</span>
+    <span>SEE THE WORLD FROM THEIR EYES</span><span aria-hidden="true">·</span>
+  </div>
+</div>
+
+<!-- ============== NAV ============== -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="brand" href="#top" aria-label="{{ shop.name | escape }} home">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <rect width="64" height="64" rx="14" fill="currentColor"/>
+        <circle cx="32" cy="32" r="14" fill="#F5F0E8"/>
+        <circle cx="32" cy="32" r="6" fill="currentColor"/>
+      </svg>
+      <span class="brand-word">pawlens</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#features">Features</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#buy" class="nav-cta">Shop · {{ product.price | money }}</a>
+      <button class="nav-menu-toggle" aria-label="Open menu" id="navToggle">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#faq">FAQ</a>
+    <a href="#buy" class="drawer-cta">Shop now</a>
+  </div>
+</header>
+
+<!-- ============== HERO / BUY ============== -->
+<section id="top" class="hero">
+  <div class="container hero-grid">
+
+    <div class="gallery">
+      <div class="gallery-main" id="galleryMain">
+        <img src="{{ product.featured_image | image_url: width: 1600 }}" alt="{{ product.featured_image.alt | escape | default: product.title }}" id="galleryImage" loading="eager" fetchpriority="high">
+        <video class="gallery-video" id="spinVideo" autoplay muted loop playsinline preload="metadata" style="display:none">
+          <source src="{{ 'pawlens-360.mp4' | file_url }}" type="video/mp4">
+        </video>
+        <button class="gallery-spin-toggle" id="spinToggle" aria-pressed="false" title="360° spin">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V1L7 5l5 4V6a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z" fill="currentColor"/></svg>
+          <span>360°</span>
+        </button>
+      </div>
+      <div class="gallery-thumbs" role="tablist" aria-label="Product photos">
+        {%- for img in product.images -%}
+        <button class="thumb{% if forloop.first %} active{% endif %}" data-src="{{ img | image_url: width: 1200 }}" aria-label="{{ img.alt | escape | default: product.title }}">
+          <img src="{{ img | image_url: width: 240 }}" alt="" loading="lazy">
+        </button>
+        {%- endfor -%}
+      </div>
+    </div>
+
+    <div class="buy" id="buy">
+      <form action="{{ routes.cart_add_url }}" method="post" id="pawlens-add">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" id="pawlensVariantId">
+        <input type="hidden" name="quantity" value="1">
+
+        <p class="eyebrow"><span class="dot"></span>{{ section.settings.tagline }}</p>
+        <h1 class="hero-title">{{ product.title }}</h1>
+        <div class="stars" aria-label="4.9 out of 5 stars from 1,247 reviews">
+          <span class="star-row" aria-hidden="true">★★★★★</span>
+          <span class="star-text">4.9 · 1,247 happy pet parents</span>
+        </div>
+        <div class="hero-sub">{{ product.description }}</div>
+
+        <div class="bundles" role="radiogroup" aria-label="Choose a bundle">
+          {%- for variant in product.variants -%}
+          {%- assign save = variant.compare_at_price | minus: variant.price -%}
+          <label class="bundle{% if forloop.index == 2 %} bundle-featured{% endif %}">
+            <input type="radio" name="bundle" value="{{ variant.id }}" data-price="{{ variant.price | divided_by: 100.0 }}" data-title="{{ variant.title | escape }}"{% if forloop.index == default_index %} checked{% endif %}>
+            <span class="bundle-card">
+              {%- if forloop.index == 2 and section.settings.badge_text != blank -%}
+              <span class="badge-pop">{{ section.settings.badge_text }}</span>
+              {%- endif -%}
+              <span class="bundle-head">
+                <span class="bundle-name">{{ variant.title }}</span>
+                {%- if save > 0 -%}<span class="bundle-save">Save {{ save | money }}</span>{%- endif -%}
+              </span>
+              <span class="bundle-price">{% if variant.compare_at_price > variant.price %}<span class="strike">{{ variant.compare_at_price | money }}</span> {% endif %}<strong>{{ variant.price | money }}</strong></span>
+              <span class="bundle-desc">{{ variant.metafields.custom.blurb | default: '' }}</span>
+            </span>
+          </label>
+          {%- endfor -%}
+        </div>
+
+        <div class="addons">
+          <p class="addons-label">Add to your order</p>
+          <label class="addon">
+            <input type="checkbox" data-price="15" data-title="Extra silicone collar">
+            <span class="addon-row">
+              <span class="addon-text"><strong>Extra silicone collar</strong><span> Backup or second pet</span></span>
+              <span class="addon-price">+ $15</span>
+            </span>
+          </label>
+          <label class="addon">
+            <input type="checkbox" data-price="9" data-title="Travel pouch">
+            <span class="addon-row">
+              <span class="addon-text"><strong>Premium travel pouch</strong><span> Felt-lined, fits everything</span></span>
+              <span class="addon-price">+ $9</span>
+            </span>
+          </label>
+          <label class="addon">
+            <input type="checkbox" data-price="12" data-title="2-year warranty">
+            <span class="addon-row">
+              <span class="addon-text"><strong>2-year extended warranty</strong><span> Drops, water, dog teeth</span></span>
+              <span class="addon-price">+ $12</span>
+            </span>
+          </label>
+        </div>
+
+        <button class="cta-primary" id="ctaPrimary" type="submit">
+          <span class="cta-label">Add to cart</span>
+          <span class="cta-price" id="ctaPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
+        </button>
+        <p class="finance">or 4 interest-free payments of <strong id="financePart">$19.75</strong> with <span class="afterpay">Afterpay</span> · <span class="klarna">Klarna</span></p>
+
+        <ul class="hero-trust">
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h13l3 4h2v6h-2a2 2 0 1 1-4 0H10a2 2 0 1 1-4 0H3V7z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            Free US shipping
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            30-day refunds
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+            1-year warranty
+          </li>
+        </ul>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============== TRUST STRIP ============== -->
+<section class="trust-strip" aria-label="Why shop with us">
+  <div class="container trust-grid">
+    <div class="trust-item"><span class="trust-num">14k+</span><span class="trust-cap">Happy pets on camera</span></div>
+    <div class="trust-item"><span class="trust-num">4.9★</span><span class="trust-cap">From 1,247 reviews</span></div>
+    <div class="trust-item"><span class="trust-num">30d</span><span class="trust-cap">Money-back guarantee</span></div>
+    <div class="trust-item"><span class="trust-num">&lt;2g</span><span class="trust-cap">Pet barely feels it</span></div>
+  </div>
+</section>
+
+<!-- ============== STORY ============== -->
+<section class="story">
+  <div class="container story-grid">
+    <div class="story-copy">
+      <p class="eyebrow"><span class="dot"></span>What if you could see what they see?</p>
+      <h2 class="story-title">Every wag. Every leap.<br><em>Every nap.</em></h2>
+      <p class="story-body">Pawlens is a tiny fisheye camera that rides shotgun on your dog or cat's collar. No app, no subscription, no setup. Press one button. Get every secret moment of their day in crisp 1080p.</p>
+      <p class="story-body">It's the closest you'll ever get to being them.</p>
+    </div>
+    <div class="story-photo">
+      <img src="{{ 'dog-cat-duo.png' | asset_url }}" alt="A golden retriever and a tabby cat both wearing Pawlens collars" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ============== FEATURES ============== -->
+<section id="features" class="features">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>What makes it special</p>
+    <h2 class="section-title center">Built tiny.<br><em>Built right.</em></h2>
+
+    <div class="feature-grid">
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'lens-macro.png' | asset_url }}" alt="Fisheye lens close-up" loading="lazy"></div>
+        <h3>1080p HD, 120° fisheye</h3>
+        <p>True wide-angle POV. Everything they see — captured in crystal HD.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'magnetic-dock.png' | asset_url }}" alt="Magnetic dock detail" loading="lazy"></div>
+        <h3>Magnetic snap mount</h3>
+        <p>Clicks into the collar in under a second. Snaps out for charging just as fast.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'side-profile.png' | asset_url }}" alt="Side profile of Pawlens camera" loading="lazy"></div>
+        <h3>Coin-light, pet-safe</h3>
+        <p>So light your pet forgets it's there. Soft silicone collar, no pinch.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'cat-windowsill.png' | asset_url }}" alt="Cat wearing Pawlens by a window" loading="lazy"></div>
+        <h3>Works for cats too</h3>
+        <p>Indoor, outdoor, midnight zoomies. Yes, your cat will tolerate it.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'lab-beach.png' | asset_url }}" alt="Labrador running with Pawlens at the beach" loading="lazy"></div>
+        <h3>Waterproof to 10m</h3>
+        <p>Lakes, puddles, sprinklers, rain. Splash-proof to fully submerged.</p>
+      </article>
+      <article class="feature-card">
+        <div class="feature-img"><img src="{{ 'owner-attaching.png' | asset_url }}" alt="Owner attaching Pawlens collar to dog" loading="lazy"></div>
+        <h3>No app. No subscription.</h3>
+        <p>Press to record. Plug into your computer. That's the whole flow.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== IN ACTION ============== -->
+<section class="action">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>In the wild</p>
+    <h2 class="section-title center">Their adventure.<br><em>Your front-row seat.</em></h2>
+  </div>
+  <div class="action-rail">
+    <div class="action-card"><img src="{{ 'collie-meadow.png' | asset_url }}" alt="Border collie running through a sunlit meadow" loading="lazy"><span class="action-cap">Border collie · golden hour meadow</span></div>
+    <div class="action-card"><img src="{{ 'lab-beach.png' | asset_url }}" alt="Labrador running on a beach at sunset" loading="lazy"><span class="action-cap">Lab · beach run, sunset</span></div>
+    <div class="action-card"><img src="{{ 'golden-retriever.png' | asset_url }}" alt="Golden retriever at the park" loading="lazy"><span class="action-cap">Golden retriever · park day</span></div>
+    <div class="action-card"><img src="{{ 'cat-windowsill.png' | asset_url }}" alt="Tabby cat in a sunny home" loading="lazy"><span class="action-cap">Tabby · indoor patrol</span></div>
+  </div>
+</section>
+
+<!-- ============== HOW IT WORKS ============== -->
+<section id="how" class="how">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>How it works</p>
+    <h2 class="section-title center">Three steps.<br><em>That's it.</em></h2>
+    <div class="how-grid">
+      <div class="how-step"><span class="how-num">01</span><h3>Snap on the collar</h3><p>The camera clicks magnetically into the silicone collar. Adjust to fit.</p></div>
+      <div class="how-step"><span class="how-num">02</span><h3>Press record</h3><p>One button. Light blinks green. Send them off.</p></div>
+      <div class="how-step"><span class="how-num">03</span><h3>Watch their day</h3><p>Pop the SD card out, plug into your laptop, relive every moment.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== WHAT'S IN THE BOX ============== -->
+<section class="box">
+  <div class="container box-grid">
+    <div class="box-photo">
+      <img src="{{ 'kit-flatlay.png' | asset_url }}" alt="Pawlens kit: camera, magnetic dock, silicone collar, USB cable" loading="lazy">
+    </div>
+    <div class="box-copy">
+      <p class="eyebrow"><span class="dot"></span>What's in the box</p>
+      <h2 class="section-title">Everything you need.<br><em>Nothing you don't.</em></h2>
+      <ul class="box-list">
+        <li><span>01</span>Pawlens HD fisheye camera</li>
+        <li><span>02</span>Adjustable silicone pet collar</li>
+        <li><span>03</span>Magnetic charging dock</li>
+        <li><span>04</span>USB-C charging cable</li>
+        <li><span>05</span>Quick-start card (no manual needed, really)</li>
+      </ul>
+      <a href="#buy" class="cta-secondary">Choose a bundle →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============== COMPARISON ============== -->
+<section class="compare">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>Pawlens vs the usual pet cam</p>
+    <h2 class="section-title center">Not a security cam.<br><em>An adventure cam.</em></h2>
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr><th></th><th class="us">Pawlens</th><th>Wall-mounted pet cam</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Travels with your pet</td><td class="us">✓</td><td>—</td></tr>
+          <tr><td>True point-of-view footage</td><td class="us">✓</td><td>—</td></tr>
+          <tr><td>Works outdoors</td><td class="us">✓</td><td>—</td></tr>
+          <tr><td>Waterproof</td><td class="us">✓ to 10m</td><td>—</td></tr>
+          <tr><td>1080p HD</td><td class="us">✓</td><td>✓</td></tr>
+          <tr><td>No monthly fee</td><td class="us">✓ ever</td><td>$10–20/mo</td></tr>
+          <tr><td>Light enough for cats</td><td class="us">✓</td><td>n/a</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============== REVIEWS ============== -->
+<section id="reviews" class="reviews">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>Real reviews · verified buyers</p>
+    <h2 class="section-title center">Pet parents like you.<br><em>Hooked.</em></h2>
+    <div class="review-grid">
+      <article class="review">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">"I finally know what Cooper does when I'm at work. Spoiler: he sleeps. A lot. But the footage of him going outside is unreal."</p>
+        <p class="review-author"><strong>Hannah M.</strong> · Portland, OR · Verified buyer</p>
+      </article>
+      <article class="review">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">"Got it for my cat thinking she'd ignore it. Two weeks later it's basically her favorite accessory. The fisheye footage is hilarious."</p>
+        <p class="review-author"><strong>Daniel R.</strong> · Austin, TX · Verified buyer</p>
+      </article>
+      <article class="review">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">"Quality is way better than I expected for the price. The magnetic mount actually stays on, even when my lab is full-send sprinting."</p>
+        <p class="review-author"><strong>Priya K.</strong> · Brooklyn, NY · Verified buyer</p>
+      </article>
+      <article class="review">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-body">"It's basically GoPro for dogs but actually affordable. My kids fight over who gets to watch the daily 'Bear Cam' montage."</p>
+        <p class="review-author"><strong>Marcus T.</strong> · Denver, CO · Verified buyer</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FINAL CTA ============== -->
+<section class="final-cta">
+  <div class="container final-grid">
+    <div>
+      <p class="eyebrow"><span class="dot"></span>Start capturing</p>
+      <h2 class="section-title">Pick yours.<br><em>Press record.</em></h2>
+      <p class="story-body">30-day money-back guarantee. Free US shipping. Ships in 24 hours.</p>
+      <a href="#buy" class="cta-primary inline">
+        <span class="cta-label">Choose a bundle</span>
+        <span class="cta-price">from {{ product.price_min | money }}</span>
+      </a>
+    </div>
+    <div class="final-photo">
+      <img src="{{ 'golden-retriever.png' | asset_url }}" alt="Golden retriever wearing Pawlens collar in the park" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ============== FAQ ============== -->
+<section id="faq" class="faq">
+  <div class="container">
+    <p class="eyebrow center"><span class="dot"></span>FAQs</p>
+    <h2 class="section-title center">Good questions.<br><em>Straight answers.</em></h2>
+
+    <div class="faq-list">
+      <details><summary>How does it actually work?<span class="chev" aria-hidden="true"></span></summary><p>The camera magnetically snaps into a soft silicone collar. Press the power button, press record, and it captures 1080p video to the included microSD card. Pop the card into your computer when they get home.</p></details>
+      <details><summary>Will my pet even notice it?<span class="chev" aria-hidden="true"></span></summary><p>The camera weighs just a few grams — roughly the same as a small dog tag. The silicone collar is soft and pinch-free. Most pets ignore it within a few minutes.</p></details>
+      <details><summary>How long does the battery last?<span class="chev" aria-hidden="true"></span></summary><p>Up to 2 hours of continuous 1080p recording. Plenty of time for a walk, a play session, or a full afternoon of cat-style window patrol. Charges back up in about 45 minutes via USB-C.</p></details>
+      <details><summary>What pets can wear it?<span class="chev" aria-hidden="true"></span></summary><p>Pawlens is designed for dogs and cats roughly 8 lbs and up. The collar adjusts from a 8" to a 18" neck. Anything smaller and the camera ratio gets bulky — we don't recommend it for tiny breeds under 8 lbs.</p></details>
+      <details><summary>Is it really waterproof?<span class="chev" aria-hidden="true"></span></summary><p>Yes. The camera is rated to 10 meters (about 32 ft). Rain, puddles, sprinklers, lake swims, full bath dunks — all fine. Just rinse and dry the silicone collar afterward.</p></details>
+      <details><summary>Do I need WiFi or an app?<span class="chev" aria-hidden="true"></span></summary><p>No. Pawlens deliberately doesn't use WiFi or apps. It records to a microSD card. Plug it into your laptop, drag the files over, watch. That's it.</p></details>
+      <details><summary>When will my order arrive?<span class="chev" aria-hidden="true"></span></summary><p>Orders ship within 24 hours from our US warehouse. Standard delivery is 3–5 business days. You'll get a tracking link as soon as it leaves.</p></details>
+      <details><summary>What's the return policy?<span class="chev" aria-hidden="true"></span></summary><p>30 days, no questions asked. If your pet hates it, or you just don't love the footage, send it back for a full refund. We pay return shipping.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============== FOOTER ============== -->
+<footer class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="brand" href="#top">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="currentColor"/>
+          <circle cx="32" cy="32" r="14" fill="#F5F0E8"/>
+          <circle cx="32" cy="32" r="6" fill="currentColor"/>
+        </svg>
+        <span class="brand-word">pawlens</span>
+      </a>
+      <p class="footer-tag">See the world through their eyes.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Shop</h4>
+      {%- for variant in product.variants -%}
+      <a href="#buy">{{ variant.title }} · {{ variant.price | money }}</a>
+      {%- endfor -%}
+    </div>
+
+    <div class="footer-col">
+      <h4>Help</h4>
+      <a href="#faq">FAQ</a>
+      <a href="#">Shipping</a>
+      <a href="#">Returns &amp; refunds</a>
+      <a href="mailto:hello@pawlens.com">hello@pawlens.com</a>
+    </div>
+
+    <div class="footer-col footer-news">
+      <h4>Subscribe</h4>
+      <p>POV footage of the week, drop alerts, and the occasional dog meme.</p>
+      <form class="newsletter" onsubmit="event.preventDefault(); this.querySelector('button').innerText='Thanks!'">
+        <input type="email" placeholder="you@email.com" required aria-label="Email address">
+        <button type="submit">Join</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="container footer-bottom">
+    <span>© <span id="year"></span> Pawlens · POV by Pawlens</span>
+    <span class="footer-legal"><a href="#">Privacy</a> · <a href="#">Terms</a> · United States (USD $)</span>
+  </div>
+</footer>
+
+<!-- ============== STICKY MOBILE BUY ============== -->
+<div class="sticky-buy" id="stickyBuy" aria-hidden="true">
+  <div class="sticky-info">
+    <span class="sticky-name" id="stickyName">{{ product.selected_or_first_available_variant.title }}</span>
+    <span class="sticky-price" id="stickyPrice">{{ product.selected_or_first_available_variant.price | money }}</span>
+  </div>
+  <a href="#buy" class="sticky-cta">Add to cart</a>
+</div>
+
+</div><!-- /.pawlens-section -->
+
+<script src="{{ 'pawlens.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Pawlens Product",
+  "tag": "section",
+  "class": "pawlens-section-wrapper",
+  "settings": [
+    {
+      "type": "text",
+      "id": "tagline",
+      "label": "Eyebrow tagline",
+      "default": "POV by pawlens"
+    },
+    {
+      "type": "text",
+      "id": "badge_text",
+      "label": "Featured bundle badge",
+      "info": "Shown on the 2nd bundle. Leave blank to hide.",
+      "default": "Most popular"
+    },
+    {
+      "type": "select",
+      "id": "default_bundle",
+      "label": "Default selected bundle",
+      "info": "Maps to the variant position (1st / 2nd / 3rd).",
+      "options": [
+        { "value": "single", "label": "Single (1st variant)" },
+        { "value": "popular", "label": "Camera + Storage (2nd variant)" },
+        { "value": "pro", "label": "Pro Kit (3rd variant)" }
+      ],
+      "default": "popular"
+    }
+  ],
+  "presets": [
+    { "name": "Pawlens Product" }
+  ]
+}
+{% endschema %}

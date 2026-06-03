@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main": {
+      "type": "pawlens-product",
+      "settings": {
+        "tagline": "POV by pawlens",
+        "badge_text": "Most popular",
+        "default_bundle": "popular"
+      }
+    }
+  },
+  "order": ["main"]
+}
