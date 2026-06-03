@@ -110,6 +110,7 @@
                 {%- if save > 0 -%}<span class="bundle-save">Save {{ save | money }}</span>{%- endif -%}
               </span>
               <span class="bundle-price">{% if variant.compare_at_price > variant.price %}<span class="strike">{{ variant.compare_at_price | money }}</span> {% endif %}<strong>{{ variant.price | money }}</strong></span>
+              <ul class="bundle-blurb">{%- case forloop.index -%}{%- when 1 -%}<li>Camera</li><li>Magnetic collar dock</li>{%- when 2 -%}<li>Camera</li><li>32 GB microSD card</li><li>Spare silicone collar</li>{%- when 3 -%}<li>Camera</li><li>32 GB card</li><li>2 collars</li><li>Premium travel pouch</li>{%- endcase -%}</ul>
               <span class="bundle-desc">{{ variant.metafields.custom.blurb | default: '' }}</span>
             </span>
           </label>
@@ -139,8 +140,19 @@
               <span class="addon-price">+ $12</span>
             </span>
           </label>
+          <label class="addon">
+            <input type="checkbox" data-price="9" data-title="Priority shipping">
+            <span class="addon-row">
+              <span class="addon-text"><strong>Priority shipping</strong><span> 1–2 business day delivery</span></span>
+              <span class="addon-price">+ $9</span>
+            </span>
+          </label>
         </div>
 
+        <p class="ship-cutoff" data-cutoff-hour="15" aria-live="polite">
+          <span class="ship-cutoff-dot" aria-hidden="true"></span>
+          <span class="ship-cutoff-text">Calculating shipping cutoff…</span>
+        </p>
         <button class="cta-primary" id="ctaPrimary" type="submit">
           <span class="cta-label">Add to cart</span>
           <span class="cta-price" id="ctaPrice">{{ product.selected_or_first_available_variant.price | money }}</span>

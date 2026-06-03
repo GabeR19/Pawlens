@@ -283,4 +283,29 @@
     addToCart();
   });
 
+  /* ---------- shipping cutoff micro-copy ---------- */
+  const shipCutoff = document.querySelector('.ship-cutoff');
+  if (shipCutoff) {
+    const cutoffText = shipCutoff.querySelector('.ship-cutoff-text');
+    const cutoffHour = parseInt(shipCutoff.dataset.cutoffHour, 10) || 15;
+    let cutoffTimer = null;
+    const renderCutoff = () => {
+      const now = new Date();
+      const cutoff = new Date(now);
+      cutoff.setHours(cutoffHour, 0, 0, 0);
+      if (now >= cutoff) {
+        if (cutoffText) cutoffText.textContent = 'Order today — ships tomorrow morning';
+        if (cutoffTimer) { clearInterval(cutoffTimer); cutoffTimer = null; }
+        return;
+      }
+      const mins = Math.ceil((cutoff - now) / 60000);
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      const within = (h > 0 ? h + 'h ' : '') + m + 'm';
+      if (cutoffText) cutoffText.textContent = 'Ships today if you order within ' + within;
+    };
+    renderCutoff();
+    cutoffTimer = setInterval(renderCutoff, 60000);
+  }
+
 })();
