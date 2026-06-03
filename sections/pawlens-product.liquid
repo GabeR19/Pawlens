@@ -259,6 +259,38 @@
   </div>
 </section>
 
+<!-- ============== REAL FOOTAGE ============== -->
+<section class="real-footage">
+  <div class="container real-footage-grid">
+    <div class="real-footage-copy">
+      <p class="eyebrow"><span class="dot"></span>From a real Pawlens</p>
+      <h2 class="section-title">Caught on collar.<br><em>Unscripted.</em></h2>
+      <p class="story-body">Real, unedited footage from a customer's cat wearing Pawlens. No staging, no second take — just whatever your pet decides to do that afternoon.</p>
+      <p class="story-body">This is what your camera roll is about to look like.</p>
+    </div>
+    <div class="real-footage-phone">
+      <div class="real-footage-frame">
+        <div class="real-footage-notch" aria-hidden="true"></div>
+        <video
+          class="real-footage-video"
+          src="{{ 'pawlens-real-footage.mp4' | asset_url }}"
+          autoplay muted loop playsinline preload="metadata"
+          aria-label="Real Pawlens footage from a customer's cat"></video>
+        <button class="real-footage-sound" type="button" aria-label="Toggle sound">
+          <svg class="rf-icon-muted" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"/>
+            <path d="M16 9l6 6M22 9l-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+          <svg class="rf-icon-on" viewBox="0 0 24 24" aria-hidden="true" style="display:none">
+            <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"/>
+            <path d="M16 8c2 1.5 2 6.5 0 8M19 5c4 3 4 11 0 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============== HOW IT WORKS ============== -->
 <section id="how" class="how">
   <div class="container">

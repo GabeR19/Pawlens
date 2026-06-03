@@ -308,4 +308,19 @@
     cutoffTimer = setInterval(renderCutoff, 60000);
   }
 
+  // Real-footage sound toggle
+  const rfVid = document.querySelector('.real-footage-video');
+  const rfBtn = document.querySelector('.real-footage-sound');
+  if (rfVid && rfBtn) {
+    const iconMuted = rfBtn.querySelector('.rf-icon-muted');
+    const iconOn = rfBtn.querySelector('.rf-icon-on');
+    rfBtn.addEventListener('click', () => {
+      rfVid.muted = !rfVid.muted;
+      const on = !rfVid.muted;
+      iconMuted.style.display = on ? 'none' : '';
+      iconOn.style.display = on ? '' : 'none';
+      if (on) rfVid.play().catch(() => {});
+    });
+  }
+
 })();
