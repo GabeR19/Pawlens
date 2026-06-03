@@ -323,4 +323,15 @@
     });
   }
 
+  // Fade out the floating demo button while the footage section is on screen
+  const demoFab = document.querySelector('.demo-fab');
+  const demoSection = document.getElementById('demo');
+  if (demoFab && demoSection && 'IntersectionObserver' in window) {
+    const fabObserver = new IntersectionObserver(
+      entries => entries.forEach(e => demoFab.classList.toggle('is-hidden', e.isIntersecting)),
+      { threshold: 0.25 }
+    );
+    fabObserver.observe(demoSection);
+  }
+
 })();
